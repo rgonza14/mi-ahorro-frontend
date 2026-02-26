@@ -32,7 +32,7 @@ export async function fetchRetailersList(params: {
     body: RetailersListBody;
 }): Promise<RetailersListResponse> {
     const { baseUrl, body } = params;
-    return postJson<RetailersListResponse>(`${baseUrl}retailers/list`, body);
+    return postJson<RetailersListResponse>(`${baseUrl}/retailers/list`, body);
 }
 
 export function useRetailersItemQuery(params: {
