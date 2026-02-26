@@ -106,7 +106,7 @@ export default function CartExportButton({
 
         const name =
             filename ??
-            `preciar-carrito-${new Date().toISOString().slice(0, 10)}.png`;
+            `MiAhorro-carrito-${new Date().toISOString().slice(0, 10)}.png`;
 
         const mobile = isProbablyMobile();
         const ios = isIOS();
@@ -128,7 +128,7 @@ export default function CartExportButton({
             if (canShareFiles) {
                 await (navigator as any).share({
                     files: [file],
-                    title: 'PRECIAR',
+                    title: 'MiAhorro',
                     text: 'Resumen del carrito'
                 });
                 return;
@@ -199,7 +199,7 @@ export default function CartExportButton({
                     >
                         <div>
                             <div style={{ fontSize: 18, fontWeight: 800 }}>
-                                PRECIAR
+                                Mi Ahorro
                             </div>
                             <div style={{ fontSize: 12, color: '#666' }}>
                                 {new Date().toLocaleString('es-AR')}
