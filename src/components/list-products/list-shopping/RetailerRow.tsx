@@ -87,6 +87,8 @@ export default function RetailerRow({
         combobox.closeDropdown();
     };
 
+    const showBestBadge = isBest && selection.items.length > 0;
+
     return (
         <Accordion.Item key={retailer} value={retailer}>
             <Combobox
@@ -103,7 +105,7 @@ export default function RetailerRow({
                                 </p>
 
                                 <Group gap='xs' mt='xs'>
-                                    {isBest && (
+                                    {showBestBadge && (
                                         <Badge
                                             radius='xl'
                                             variant='filled'
@@ -191,18 +193,9 @@ export default function RetailerRow({
                 <Stack gap='sm'>
                     {missingItems.length > 0 && (
                         <Card radius='lg' p='sm' withBorder>
-                            <Group justify='space-between' align='center'>
-                                <Group gap='xs' align='center'>
-                                    <CircleAlert size={16} />
-                                    <Text fw={700}>Faltantes</Text>
-                                </Group>
-                                <Badge
-                                    radius='xl'
-                                    variant='light'
-                                    color='yellow'
-                                >
-                                    {missingItems.length}
-                                </Badge>
+                            <Group gap='xs' align='center'>
+                                <CircleAlert size={16} />
+                                <Text fw={700}>Faltantes</Text>
                             </Group>
 
                             <Text size='sm' c='black' mt={6}>

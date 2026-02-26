@@ -187,7 +187,7 @@ const FormSearch = () => {
                         <Textarea
                             flex={1}
                             placeholder={
-                                'Pegá tu lista (una por línea)\nleche\ncoca cola 2.25\narroz 1kg'
+                                'Pegá tu lista (un producto por línea)\nleche\ncoca cola 2.25\narroz 1kg'
                             }
                             key={listForm.key('list')}
                             {...listForm.getInputProps('list')}
