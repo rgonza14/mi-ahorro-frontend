@@ -1,2 +1,1 @@
-export * from "./supermarket";
-export * from './retailers.ts'
+export * from './retailers.ts';
