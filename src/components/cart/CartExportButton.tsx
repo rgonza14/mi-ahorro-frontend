@@ -24,6 +24,27 @@ type Props = {
     filename?: string;
 };
 
+function dataUrlToFile(dataUrl: string, filename: string): File {
+    const [header, base64] = dataUrl.split(',');
+    const mimeMatch = header.match(/data:(.*?);base64/);
+    const mime = mimeMatch?.[1] ?? 'image/png';
+
+    const binary = atob(base64);
+    const len = binary.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+
+    return new File([bytes], filename, { type: mime });
+}
+
+function isProbablyMobile(): boolean {
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+function isIOS(): boolean {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
 export default function CartExportButton({
     groupBySupermarket = true,
     filename
@@ -33,7 +54,6 @@ export default function CartExportButton({
 
     const { units, total, groups } = useMemo(() => {
         const values = Object.values(cart);
-
         const groupsMap = new Map<string, GroupBlock>();
 
         for (const it of values) {
@@ -84,18 +104,56 @@ export default function CartExportButton({
     const handleExport = async () => {
         if (!ref.current) return;
 
-        const dataUrl = await toPng(ref.current, {
-            cacheBust: true,
-            pixelRatio: 2,
-            backgroundColor: '#ffffff'
-        });
-
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download =
+        const name =
             filename ??
             `preciar-carrito-${new Date().toISOString().slice(0, 10)}.png`;
-        a.click();
+
+        const mobile = isProbablyMobile();
+        const ios = isIOS();
+
+        try {
+            const dataUrl = await toPng(ref.current, {
+                cacheBust: true,
+                pixelRatio: mobile ? 1 : 2,
+                backgroundColor: '#ffffff'
+            });
+
+            const file = dataUrlToFile(dataUrl, name);
+
+            const canShareFiles =
+                typeof navigator !== 'undefined' &&
+                'share' in navigator &&
+                (navigator as any).canShare?.({ files: [file] });
+
+            if (canShareFiles) {
+                await (navigator as any).share({
+                    files: [file],
+                    title: 'PRECIAR',
+                    text: 'Resumen del carrito'
+                });
+                return;
+            }
+
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = name;
+
+            if (!ios) {
+                a.click();
+                return;
+            }
+
+            const w = window.open();
+            if (w) {
+                w.document.write(
+                    `<img src="${dataUrl}" style="max-width:100%;height:auto" />`
+                );
+            } else {
+                window.location.href = dataUrl;
+            }
+        } catch (e) {
+            console.error('Export/share PNG failed:', e);
+        }
     };
 
     const formatter = new Intl.NumberFormat('es-AR');
